@@ -20,7 +20,8 @@ class BlogPostsController extends Controller
         $categories = Category::all();
         $tags = Tag::withCount('posts')->get();
 
-        $posts = Post::with(['tags', 'category'])->latest()->get();
+        $perPage = (int) (\App\Models\Setting::where('key', 'posts_per_page')->value('value') ?? 10);
+        $posts = Post::with(['tags', 'category'])->latest()->take($perPage)->get();
 
         return view('front.partial.blog', compact('categories', 'tags', 'posts'));
     }
@@ -42,7 +43,8 @@ class BlogPostsController extends Controller
             });
         }
 
-        $posts = $query->get();
+        $perPage = (int) (\App\Models\Setting::where('key', 'posts_per_page')->value('value') ?? 10);
+        $posts = $query->take($perPage)->get();
 
         return view('front.partial.post_list', compact('posts'));
     }
@@ -82,8 +84,17 @@ class BlogPostsController extends Controller
             'likes_count' => $result['likes_count'],
         ]);
     }
-    public function comment(Request $request, $postId)
+    public function comment(Request $request, Post $post)
     {
+        // Check if comments are allowed in settings
+        $allowComments = \App\Models\Setting::where('key', 'allow_comments')->value('value');
+        if ($allowComments !== null && (string)$allowComments === '0') {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Comments are currently disabled by the administrator.'
+            ], 403);
+        }
+
         // 1. Validation
         $validated = $request->validate([
             'comment_body' => 'required|string|max:1000',
@@ -92,7 +103,7 @@ class BlogPostsController extends Controller
         ]);
 
         $comment = Comment::create([
-            'post_id'      => $postId,
+            'post_id'      => $post->id,
             'name'         => !empty($validated['name']) ? $validated['name'] : 'Guest',
             'email'        => $validated['email'] ?? null,
             'comment_body' => $validated['comment_body'],
@@ -101,14 +112,14 @@ class BlogPostsController extends Controller
             'user_agent'   => $request->userAgent(),
         ]);
 
-        $commentsCount = Comment::where('post_id', $postId)
+        $comments = Comment::where('post_id', $post->id)
             ->where('status', 'approved')
-            ->count();
+            ->latest()->get();
 
         return response()->json([
             'status'         => 'success',
             'message'        => 'Comment added successfully!',
-            'comments_count' => $commentsCount,
+            'comments_count' => $comments->count(),
             'comment'        => [
                 'name'         => $comment->name,
                 'comment_body' => $comment->comment_body,
@@ -126,6 +137,6 @@ class BlogPostsController extends Controller
             session()->put($viewed_key, true);
         }
         $posts = collect([$post]);
-        return view('front.partial.blog', compact('categories', 'posts'));
+        return view('front.partial.post_list', compact('categories', 'posts'));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 
@@ -21,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer('*', function ($view) {
+            $siteSettings = Setting::pluck('value', 'key')->toArray();
+            $view->with('siteSettings', $siteSettings);
+        });
+
         View::composer('front.layout.view', function ($view) {
             $siteUser = User::find(1);
 

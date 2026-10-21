@@ -8,15 +8,17 @@
                 <!-- 1. Top Image -->
                 @if (!empty($post->image))
                     @php
-                        $imgSrc = \Illuminate\Support\Str::startsWith($post->image, ['http://', 'https://']) ? $post->image : asset('storage/' . $post->image);
+                        $imgSrc = \Illuminate\Support\Str::startsWith($post->image, ['http://', 'https://'])
+                            ? $post->image
+                            : asset('storage/' . $post->image);
                     @endphp
-                    <div style="height: 350px; min-height: 350px; overflow: hidden;">
+                    <div class="post-card-img-wrapper">
                         <img src="{{ $imgSrc }}" class="card-img-top rounded-0 w-100 h-100"
                             style="object-fit: cover;" alt="{{ $post->title }}">
                     </div>
                 @else
-                    <div class="bg-light d-flex align-items-center justify-content-center text-muted"
-                        style="height: 220px; min-height: 220px;">
+                    <div
+                        class="bg-light d-flex align-items-center justify-content-center text-muted post-card-img-wrapper">
                         <i class="bi bi-image fs-1 text-secondary opacity-50"></i>
                     </div>
                 @endif
@@ -88,7 +90,8 @@
                             data-bs-toggle="collapse" data-bs-target="#floating-comment-{{ $post->id }}"
                             aria-expanded="false" style="cursor: pointer;" title="Leave a comment">
                             <i class="bi bi-chat-square fs-6"></i>
-                            <span class="comment-count-badge fw-bold">{{ $post->comments_count ?? 0 }}</span>
+                            <span
+                                class="comment-count-badge fw-bold">{{ $post->comments->where('status', 'approved')->count() }}</span>
                         </span>
                     </div>
 
@@ -115,9 +118,27 @@
                         </div>
 
                         <!-- Mini Comments Feed -->
+                        <!-- Mini Comments Feed -->
                         <div class="comment-list d-flex flex-column gap-2 mb-2 pe-1"
-                            style="max-height: 120px; overflow-y: auto;">
-                            <!-- Comments JS se add honge -->
+                            id="comment-list-{{ $post->id }}" style="max-height: 120px; overflow-y: auto;">
+
+                            {{-- Post ke existing comments yahan show honge --}}
+                            @forelse($post->comments->where('status', 'approved') as $cmt)
+                                <div class="bg-light rounded p-2 border">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="fw-bold" style="font-size: 11px;">{{ $cmt->name }}</span>
+                                        <small class="text-muted"
+                                            style="font-size: 10px;">{{ $cmt->created_at->diffForHumans() }}</small>
+                                    </div>
+                                    <div class="text-dark" style="font-size: 12px; word-break: break-word;">
+                                        {{ $cmt->comment_body }}
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center text-muted no-comments-msg" style="font-size: 12px;">
+                                    No comments yet. Be the first to comment!
+                                </div>
+                            @endforelse
                         </div>
 
                         <!-- Comment Form -->

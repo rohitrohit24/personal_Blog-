@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProScript Admin Dashboard</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -22,41 +23,35 @@
                 <span>ProScript</span>
             </a>
             <nav class="mt-4 flex-grow-1">
-                <a href="{{ url('admin/dashboard') }}" class="nav-link">
+                <a href="{{ url('admin/dashboard') }}" class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span class="nav-text">Dashboard</span>
                 </a>
-                <a href="{{ url('/posts') }}" class="nav-link ">
+                <a href="{{ url('/posts') }}" class="nav-link {{ request()->is('posts*') ? 'active' : '' }}">
                     <i class="fa-solid fa-pen-nib"></i>
                     <span class="nav-text">Posts</span>
                 </a>
-                <a href="{{ url('/tags') }}" class="nav-link ">
+                <a href="{{ url('/tags') }}" class="nav-link {{ request()->is('tags*') ? 'active' : '' }}">
                     <i class="fa-solid fa-tags"></i>
                     <span class="nav-text">Tags</span>
                 </a>
-                <a href="{{ url('/categories') }}" class="nav-link ">
+                <a href="{{ url('/categories') }}" class="nav-link {{ request()->is('categories*') ? 'active' : '' }}">
                     <i class="fa-solid fa-folder"></i>
                     <span class="nav-text">Categories</span>
                 </a>
-                <a href="{{ url('/comments') }}" class="nav-link ">
+                <a href="{{ url('/comments') }}" class="nav-link {{ request()->is('comments*') ? 'active' : '' }}">
                     <i class="fa-solid fa-comments"></i>
                     <span class="nav-text">Comments</span>
                 </a>
             </nav>
             <div class="mt-auto mb-4">
-                <a href="{{ url('admin/settings') }}" class="nav-link ">
+                <a href="{{ url('admin/settings') }}" class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}">
                     <i class="fa-solid fa-gear"></i>
                     <span class="nav-text">Settings</span>
                 </a>
             </div>
-            {{-- <div class="mt-auto mb-4">
-                <a href="{{ url('admin/settings') }}"
-                    class="nav-link {{ request()->is('admin/settings') ? 'active' : '' }}">
-                    <i class="fa-solid fa-gear"></i>
-                    <span class="nav-text">Settings</span>
-                </a>
-            </div> --}}
         </aside>
+        <div id="sidebar-overlay"></div>
 
         <div id="page-content-wrapper">
             <header id="topbar">
@@ -70,12 +65,61 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-link text-light position-relative p-0 me-2">
+                <div class="dropdown">
+                    <button class="btn btn-link text-light position-relative p-0 me-2 notification-bell" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-bell fs-5"></i>
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
-                            style="width: 10px; height: 10px;"></span>
+                        @php
+                            $pendingComments = \App\Models\Comment::where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingComments > 0)
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                            {{ $pendingComments > 9 ? '9+' : $pendingComments }}
+                        </span>
+                        @else
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="width: 10px; height: 10px; display: none;"></span>
+                        @endif
                     </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg p-0" style="width: 320px; border-radius: 12px; overflow: hidden;">
+                        <div class="px-3 py-2 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white;">
+                            <span class="fw-semibold">Notifications</span>
+                            @if($pendingComments > 0)
+                            <span class="badge bg-white text-primary rounded-pill">{{ $pendingComments }} pending</span>
+                            @endif
+                        </div>
+                        <div style="max-height: 320px; overflow-y: auto;">
+                            @php
+                                $recentNotifComments = \App\Models\Comment::with('post')->orderBy('created_at', 'desc')->take(8)->get();
+                            @endphp
+                            @forelse($recentNotifComments as $notif)
+                            <a href="{{ url('/comments') }}" class="dropdown-item px-3 py-2 border-bottom d-flex align-items-start gap-2 text-decoration-none" style="color: inherit;">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($notif->name ?? 'User') }}&background=e0e7ff&color=4f46e5&size=32"
+                                     class="rounded-circle flex-shrink-0" width="32" height="32" alt="">
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-semibold text-dark" style="font-size: 0.82rem;">{{ $notif->name ?? 'Anonymous' }}</span>
+                                        <small class="text-muted" style="font-size: 0.7rem;">{{ $notif->created_at?->diffForHumans() }}</small>
+                                    </div>
+                                    <p class="mb-0 text-muted text-truncate" style="font-size: 0.78rem;">{{ Str::limit($notif->comment_body, 60) }}</p>
+                                    @if($notif->post)
+                                    <small class="text-primary" style="font-size: 0.72rem;"><i class="fa-solid fa-file-lines me-1"></i>{{ Str::limit($notif->post->title, 40) }}</small>
+                                    @endif
+                                </div>
+                                @if($notif->status === 'pending')
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle flex-shrink-0" style="font-size: 0.6rem;">New</span>
+                                @endif
+                            </a>
+                            @empty
+                            <div class="text-center py-4 text-muted">
+                                <i class="fa-regular fa-bell-slash fs-3 d-block mb-2"></i>
+                                <small>No notifications</small>
+                            </div>
+                            @endforelse
+                        </div>
+                        <div class="text-center py-2 border-top">
+                            <a href="{{ url('/comments') }}" class="btn btn-sm btn-primary rounded-pill px-4" style="font-size: 0.8rem;">View All Comments</a>
+                        </div>
+                    </div>
+                </div>
                     <div class="dropdown">
                         <a href="#"
                             class="d-flex align-items-center text-decoration-none dropdown-toggle text-light"
@@ -187,10 +231,41 @@
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom JS for Menu Toggle -->
+    <!-- Custom JS for Menu Toggle & Responsive Drawer -->
     <script>
-        document.getElementById('menu-toggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('show');
+            if (overlay) {
+                overlay.classList.toggle('show');
+            }
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('show');
+            if (overlay) {
+                overlay.classList.remove('show');
+            }
+        }
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', toggleSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close sidebar on mobile when a nav-link is clicked
+        sidebar.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    closeSidebar();
+                }
+            });
         });
     </script>
     <!-- 5 Second Auto-Close Script -->

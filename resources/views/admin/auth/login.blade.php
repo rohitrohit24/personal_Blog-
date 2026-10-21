@@ -90,7 +90,7 @@
     <div class="card bg-surface text-main shadow-lg border-0 border-top-warning rounded-4 w-100"
         style="max-width: 420px;">
         <!-- Header -->
-        <div class="card-body p-4 p-sm-5 pb-sm-4 text-center">
+        <div class="card-body p-3 p-sm-5 pb-sm-4 text-center">
             <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-dark text-warning-custom mb-3 shadow-sm"
                 style="width: 54px; height: 54px; font-size: 1.5rem;">
                 <i class="fa-solid fa-shield-halved"></i>

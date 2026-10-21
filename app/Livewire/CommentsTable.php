@@ -140,7 +140,7 @@ class CommentsTable extends DataTableComponent
                             <button type="button" class="btn btn-sm btn-outline-primary edit-action-btn px-2 py-1" data-bs-toggle="modal" data-bs-target="#editCommentsModal" data-row="' . $rowData . '" title="Edit Comment">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary delete-action-btn px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteCommentsModal" data-row="' . $rowData . '" title="Delete Comment">
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-action-btn px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteCommentsModal" data-row="' . $rowData . '" title="Delete Comment">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>

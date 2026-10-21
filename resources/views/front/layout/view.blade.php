@@ -5,19 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Blog Website</title>
+    <title>{{ $siteSettings['site_name'] ?? 'Blog Website' }}</title>
+    @if (!empty($siteSettings['site_description']))
+        <meta name="description" content="{{ $siteSettings['site_description'] }}">
+    @endif
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/front.css') }}">
+    @livewireStyles
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{{ url('/') }}">{{ $siteUser->name ?? 'Rohit Kumar' }}</a>
+            <a class="navbar-brand fw-bold"
+                href="{{ url('/') }}">{{ $siteSettings['site_name'] ?? ($siteUser->name ?? 'Rohit Kumar') }}</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -38,9 +43,8 @@
                     <li class="nav-item">
                         <a class="nav-link custom-nav-link" href="{{ url('front/contactus') }}">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <!-- Subscribe ko highlight karne ke liye highlight class -->
-                        <a class="nav-link custom-nav-link subscribe-link" href="#">Subscribe</a>
+                    <li class="nav-item d-flex align-items-center">
+                        <livewire:newsletter-subscribe variant="navbar" />
                     </li>
                 </ul>
             </div>
@@ -55,7 +59,10 @@
 
                 <!--  Website Name & Intro -->
                 <div class="col-lg-3 col-md-6">
-                    <h3 class="fw-bold mb-3">Rohit Kumar</h3>
+                    <h3 class="fw-bold mb-3">{{ $siteSettings['site_name'] ?? 'Rohit Kumar' }}</h3>
+                    @if (!empty($siteSettings['site_description']))
+                        <p class="small text-white-50">{{ $siteSettings['site_description'] }}</p>
+                    @endif
                 </div>
 
                 <!-- Navlinks -->
@@ -80,67 +87,55 @@
                         <i class="bi bi-telephone-fill me-2 "></i> +91 80940 24015
                     </p>
                     <p class="small mb-3">
-                        <i class="bi bi-envelope-fill me-2 "></i> rohitverma@gmail.com
+                        <i class="bi bi-envelope-fill me-2 "></i>
+                        {{ !empty($siteSettings['contact_email']) ? $siteSettings['contact_email'] : 'rohitverma@gmail.com' }}
                     </p>
 
                     <!-- Social Icons -->
-                    @if ($siteUser)
-                        <div class="d-flex gap-2">
-                            @if ($siteUser->social_links['portfolio'])
-                                <a href="{{ $siteUser->social_links['portfolio'] }}" target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 38px; height: 38px;">
-                                    <i class="bi bi-instagram"></i>
-                                </a>
-                            @endif
+                    <div class="d-flex gap-2">
+                        @php
+                            $githubUrl = !empty($siteSettings['github_url'])
+                                ? $siteSettings['github_url']
+                                : $siteUser->social_links['github'] ?? null;
+                            $twitterUrl = !empty($siteSettings['twitter_url'])
+                                ? $siteSettings['twitter_url']
+                                : $siteUser->social_links['twitter'] ?? null;
+                            $linkedinUrl = !empty($siteSettings['linkedin_url'])
+                                ? $siteSettings['linkedin_url']
+                                : $siteUser->social_links['linkedin'] ?? null;
+                        @endphp
 
-                            @if ($siteUser->social_links['github'])
-                                <a href="{{ $siteUser->social_links['github'] }}" target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 38px; height: 38px;">
-                                    <i class="bi bi-github"></i>
-                                </a>
-                            @endif
+                        @if ($githubUrl)
+                            <a href="{{ $githubUrl }}" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 38px; height: 38px;">
+                                <i class="bi bi-github"></i>
+                            </a>
+                        @endif
 
-                            @if ($siteUser->social_links['twitter'])
-                                <a href="{{ $siteUser->social_links['twitter'] }}" target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 38px; height: 38px;">
-                                    <i class="bi bi-twitter"></i>
-                                </a>
-                            @endif
+                        @if ($twitterUrl)
+                            <a href="{{ $twitterUrl }}" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 38px; height: 38px;">
+                                <i class="bi bi-twitter"></i>
+                            </a>
+                        @endif
 
-                            @if ($siteUser->social_links['linkedin'])
-                                <a href="{{ $siteUser->social_links['linkedin'] }}" target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 38px; height: 38px;">
-                                    <i class="bi bi-linkedin"></i>
-                                </a>
-                            @endif
-                        </div>
-                    @endif
+                        @if ($linkedinUrl)
+                            <a href="{{ $linkedinUrl }}" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 38px; height: 38px;">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Subscribe Button -->
                 <div class="col-lg-3 col-md-6">
                     <h5 class="mb-3">Stay Updated</h5>
                     <p class="small">Subscribe to receive notifications about our latest posts.</p>
-
-                    <form action="{{ route('contact.subscriber') }}" method="POST">
-                        @csrf
-                        <div class="mb-2">
-                            <input type="email" class="form-control rounded-5" name="email" required
-                                id="email" placeholder="Enter your email address">
-                        </div>
-                        @error('email')
-                            <p class="text-red-500 text-sm mb-2">{{ $message }}</p>
-                        @enderror
-                        <button type="submit" class="custom-btn btn-outline w-100">Subscribe Now</button>
-                    </form>
+                    <livewire:newsletter-subscribe variant="footer" />
                 </div>
 
             </div>
@@ -167,6 +162,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
     </script>
+    @livewireScripts
     @stack('scripts')
 </body>
 

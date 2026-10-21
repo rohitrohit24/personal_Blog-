@@ -168,7 +168,8 @@
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json'
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
                             }
                         })
                         .then(res => res.json())
@@ -198,7 +199,8 @@
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json'
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
                             }
                         })
                         .then(res => res.json())
@@ -237,12 +239,28 @@
                 if (editBtn) {
                     let rowData = JSON.parse(editBtn.getAttribute('data-row'));
 
-                    document.getElementById('edit_id').value = rowData.id;
-                    document.getElementById('edit_post_id').value = rowData.post_id;
-                    document.getElementById('edit_name').value = rowData.name;
-                    document.getElementById('edit_email').value = rowData.email;
-                    document.getElementById('edit_comment_body').value = rowData.comment_body;
-                    document.getElementById('edit_status').value = rowData.status;
+                    if (document.getElementById('edit_id')) document.getElementById('edit_id').value = rowData.id ?? '';
+                    if (document.getElementById('edit_name')) document.getElementById('edit_name').value = rowData.name ?? '';
+                    if (document.getElementById('edit_email')) document.getElementById('edit_email').value = rowData.email ?? '';
+                    if (document.getElementById('edit_comment_body')) document.getElementById('edit_comment_body').value = rowData.comment_body ?? '';
+
+                    // Select Post
+                    let postSelect = document.getElementById('edit_post_id');
+                    if (postSelect && rowData.post_id !== undefined && rowData.post_id !== null) {
+                        postSelect.value = String(rowData.post_id);
+                        Array.from(postSelect.options).forEach(opt => {
+                            opt.selected = (opt.value == String(rowData.post_id));
+                        });
+                    }
+
+                    // Select Status
+                    let statusSelect = document.getElementById('edit_status');
+                    if (statusSelect && rowData.status) {
+                        statusSelect.value = rowData.status;
+                        Array.from(statusSelect.options).forEach(opt => {
+                            opt.selected = (opt.value.toLowerCase() === String(rowData.status).toLowerCase());
+                        });
+                    }
                 }
             });
 
@@ -268,7 +286,8 @@
                             body: formData,
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json'
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
                             }
                         })
                         .then(response => {

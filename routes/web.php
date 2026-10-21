@@ -10,26 +10,16 @@ use App\Http\Controllers\TagsController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
 require __DIR__ . '/auth.php';
-
 
 Route::middleware('guest')->prefix('admin')->group(function () {
     Route::get('login', function () {
         return view('admin.auth.login');
     })->name('admin.login');
-
     Route::post('auth', [LoginController::class, 'login'])->name('admin.auth');
 });
 
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {
-
-    // Route::view('dashboard', 'dashboard')
-    //     ->middleware('verified')
-    //     ->name('dashboard');
 
     // Admin Panel Group
     Route::prefix('admin')->group(function () {
@@ -42,10 +32,9 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         Route::put('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
         Route::post('/logout', [ProfileController::class, 'logout'])->name('admin.profile.logout');
 
-        // Settings View
-        Route::get('/settings', function () {
-            return view('admin.partial.settings');
-        })->name('admin.settings');
+        // Settings
+        Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('admin.settings');
+        Route::post('/settings', [\App\Http\Controllers\SettingsController::class, 'update'])->name('admin.settings.update');
 
         // Categories View (Partial/AJAX)
         // Route::get('/categories/view', function () {

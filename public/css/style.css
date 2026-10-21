@@ -108,6 +108,7 @@ body {
     color: var(--text-light);
     overflow: hidden; /* Stop full page scroll */
     height: 100vh;
+    height: 100dvh;
     margin: 0;
 }
 
@@ -115,6 +116,7 @@ body {
 #sidebar {
     width: 240px;
     height: 100vh;
+    height: 100dvh;
     position: fixed;
     top: 0;
     left: -240px;
@@ -127,6 +129,25 @@ body {
 
 #sidebar.show {
     left: 0;
+}
+
+/* Mobile Sidebar Backdrop Overlay */
+#sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background-color: rgba(15, 23, 42, 0.6);
+    z-index: 1040;
+    backdrop-filter: blur(2px);
+    transition: opacity 0.3s ease;
+}
+
+#sidebar-overlay.show {
+    display: block;
 }
 
 .brand-logo {
@@ -228,31 +249,45 @@ body {
 }
 
 .card-stat {
-    background-color: var(--warning);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(255,255,255,0.95) 100%);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), #7c3aed);
+    border-radius: 16px 16px 0 0;
 }
 
 .card-stat:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
 }
 
 .icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
-    background-color: rgba(230, 229, 236, 0.948);
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.15));
     color: var(--primary);
+    flex-shrink: 0;
 }
 
 .card-custom {
@@ -358,6 +393,114 @@ body {
     }
 }
 
+/* ==================== DASHBOARD RESPONSIVE MEDIA QUERIES ==================== */
+
+/* Tablet & Mobile (<= 991.98px) */
+@media (max-width: 991.98px) {
+    .custom-page-header {
+        padding: 1.25rem 1.5rem;
+    }
+    .card-stat {
+        padding: 1.25rem;
+    }
+    .card-stat h3 {
+        font-size: 1.6rem;
+    }
+}
+
+/* Mobile Devices (<= 767.98px) */
+@media (max-width: 767.98px) {
+    #content-area {
+        padding: 1rem 0.75rem;
+        margin: 0;
+        border-radius: 16px 16px 0 0;
+    }
+
+    #topbar {
+        padding: 0 0.85rem;
+        height: 56px;
+    }
+
+    .custom-page-header {
+        padding: 1rem;
+        margin-bottom: 1rem !important;
+    }
+
+    .custom-page-header .header-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .custom-page-header h4 {
+        font-size: 1.15rem;
+    }
+
+    .card-stat {
+        padding: 1rem;
+    }
+
+    .icon-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .admin-table thead th,
+    .admin-table tbody td {
+        padding: 0.75rem 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    .profile-card {
+        padding: 1rem !important;
+    }
+}
+
+/* Small Mobile (<= 575.98px) */
+@media (max-width: 575.98px) {
+    .custom-page-header {
+        border-radius: 8px;
+    }
+
+    .custom-page-header .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+
+    .custom-page-header .header-action {
+        width: 100%;
+    }
+
+    .custom-page-header .header-action button,
+    .custom-page-header .header-action a {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-content {
+        border-radius: 14px;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .card-stat h3 {
+        font-size: 1.35rem;
+    }
+}
+
 /* Table wrapper ko horizontally scrollable banayein */
 .sticky-actions-table-wrapper,
 .table-responsive {
@@ -446,3 +589,25 @@ body {
 .login-card-footer a:hover {
     text-decoration: underline !important;
 }
+
+/* ==================== POST DETAILS MODAL IMAGE ==================== */
+.admin-modal-img-container {
+    max-height: 320px;
+    height: 280px;
+    width: 100%;
+}
+
+.admin-modal-preview-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (max-width: 575.98px) {
+    .admin-modal-img-container {
+        max-height: 200px;
+        height: 180px;
+    }
+}
+

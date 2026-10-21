@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Attributes\Rule;
+use Illuminate\Validation\Rule;
 
 class PostsController extends Controller
 {
@@ -73,7 +73,7 @@ class PostsController extends Controller
             'category_id' => 'required|exists:categories,id',
             'status'      => 'required|in:draft,published',
             'content'     => 'required|string',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image'       => 'nullable',
             'tags'        => 'nullable|array',
             'tags.*'      => 'exists:tags,id'
         ]);
@@ -83,6 +83,8 @@ class PostsController extends Controller
                 Storage::disk('public')->delete($post->image);
             }
             $validated['image'] = $request->file('image')->store('posts', 'public');
+        } elseif ($request->filled('image')) {
+            $validated['image'] = $request->image;
         } else {
             unset($validated['image']);
         }
@@ -96,30 +98,6 @@ class PostsController extends Controller
             'data'    => $post
         ], 200);
     }
-    // {
-    //     $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'slug' => 'required|string|max:255|unique:posts,slug,' . $id,
-    //         'category_id' => 'required|exists:categories,id',
-    //         'status' => 'required|in:draft,published',
-    //         'content' => 'required'
-    //     ]);
-
-
-    //     $post = Post::findOrFail($id);
-    //     $post->category_id = $request->category_id;
-    //     $post->title = $request->title;
-    //     $post->slug = $request->slug;
-    //     $post->content = $request->content;
-    //     $post->image = $request->image;
-    //     $post->status = $request->status;
-    //     $post->save();
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Post updated successfully'
-    //     ]);
-    // }
 
     public function destroy($id)
     {

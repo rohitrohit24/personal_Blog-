@@ -100,7 +100,7 @@
                 <x-form.input type="text" id="edit_title" name="title" label="Post Title" required="true" />
             </div>
             <div class="col-md-6">
-                <x-form.input type="text" id="edit_slug" name="slug" label="URL Slug" readonly="true" />
+                <x-form.input type="text" id="edit_slug" name="slug" label="URL Slug" />
             </div>
         </div>
 
@@ -156,10 +156,10 @@
         <div class="text-start">
 
             <!-- 1. Top Featured Image & Category Badge -->
-            <div class="position-relative rounded-4 overflow-hidden mb-4 shadow-sm"
-                style="max-height: 320px; background-color: #f1f3f5;">
-                <img id="show_image" src="" alt="Post Image" class="w-100 object-fit-cover"
-                    style="min-height: 280px; display: none;">
+            <div class="position-relative rounded-4 overflow-hidden mb-4 shadow-sm admin-modal-img-container"
+                style="background-color: #f1f3f5;">
+                <img id="show_image" src="" alt="Post Image" class="admin-modal-preview-img"
+                    style="display: none;">
 
                 <div id="show_no_image" class="d-flex align-items-center justify-content-center text-muted"
                     style="height: 200px; display: none;">
@@ -235,7 +235,7 @@
                     // Populate fields
                     document.getElementById('show_id').innerText = rowData.id;
                     document.getElementById('show_title').innerText = rowData.title;
-                    document.getElementById('show_category').innerText = rowData.category;
+                    document.getElementById('show_category').innerText = rowData.category_name || 'Category';
                     document.getElementById('show_slug').innerText = rowData.slug;
                     document.getElementById('show_content').innerHTML = rowData.content;
 
@@ -258,7 +258,7 @@
                     statusBadge.className =
                         `position-absolute top-0 end-0 m-3 badge px-3 py-2 shadow-sm rounded-pill text-uppercase ${rowData.status === 'published' ? 'bg-success' : 'bg-warning'}`;
 
-                    document.getElementById('show_category').innerText = rowData.category || 'Category';
+                    document.getElementById('show_category').innerText = rowData.category_name || 'Category';
 
                     // Image Handling
                     let imgElement = document.getElementById('show_image');
@@ -353,13 +353,30 @@
                 if (editBtn) {
                     let rowData = JSON.parse(editBtn.getAttribute('data-row'));
 
-                    document.getElementById('edit_id').value = rowData.id;
-                    document.getElementById('edit_title').value = rowData.title;
-                    document.getElementById('edit_slug').value = rowData.slug;
-                    document.getElementById('edit_category_id').value = rowData.category_id;
-                    document.getElementById('edit_status').value = rowData.status;
-                    document.getElementById('edit_content').value = rowData.content;
-                    document.getElementById('edit_image').value = rowData.image || '';
+                    // Populate inputs
+                    if (document.getElementById('edit_id')) document.getElementById('edit_id').value = rowData.id ?? '';
+                    if (document.getElementById('edit_title')) document.getElementById('edit_title').value = rowData.title ?? '';
+                    if (document.getElementById('edit_slug')) document.getElementById('edit_slug').value = rowData.slug ?? '';
+                    if (document.getElementById('edit_content')) document.getElementById('edit_content').value = rowData.content ?? '';
+                    if (document.getElementById('edit_image')) document.getElementById('edit_image').value = rowData.image || '';
+
+                    // Select Category
+                    let categorySelect = document.getElementById('edit_category_id');
+                    if (categorySelect && (rowData.category_id !== undefined && rowData.category_id !== null)) {
+                        categorySelect.value = String(rowData.category_id);
+                        Array.from(categorySelect.options).forEach(opt => {
+                            opt.selected = (opt.value == String(rowData.category_id));
+                        });
+                    }
+
+                    // Select Status
+                    let statusSelect = document.getElementById('edit_status');
+                    if (statusSelect && rowData.status) {
+                        statusSelect.value = rowData.status;
+                        Array.from(statusSelect.options).forEach(opt => {
+                            opt.selected = (opt.value.toLowerCase() === String(rowData.status).toLowerCase());
+                        });
+                    }
 
                     // Reset and populate edit tag checkboxes
                     document.querySelectorAll('.edit-tag-checkbox').forEach(cb => cb.checked = false);
@@ -394,7 +411,8 @@
                             body: formData,
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json'
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
                             }
                         })
                         .then(response => {

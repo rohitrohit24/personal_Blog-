@@ -2,14 +2,14 @@
 
 @section('content')
     <section id="blogs">
-        <div class="container-fluid main-colour  px-4">
+        <div class="container-fluid main-colour px-3 px-md-4">
             {{-- section heading --}}
-            <div class="d-flex align-items-center px-3 mb-3">
-                <div class="me-auto">
-                    <span class="fs-8 font-family ">The Blog</span>
+            <div class="d-flex flex-wrap align-items-center justify-content-between px-2 px-md-3 mb-3 gap-2">
+                <div>
+                    <span class="fs-8 font-family">The Blog</span>
                 </div>
                 <div>
-                    <a href="#" class="custom-btn btn-solid">View All Posts</a>
+                    <a href="" class="custom-btn btn-solid category-btn"data-id="all">View All Posts</a>
                 </div>
             </div>
 
@@ -37,16 +37,19 @@
                 @endforelse
             </div>
 
-            @if(isset($tags) && count($tags) > 0)
+            @if (isset($tags) && count($tags) > 0)
                 <!-- Tags Filter Bar -->
-                <div class="d-flex align-items-center gap-2 overflow-auto pb-3 mb-4 flex-nowrap" style="white-space: nowrap;">
-                    <span class="text-muted small me-1 fw-semibold"><i class="bi bi-tags me-1"></i>Tags:</span>
-                    <button type="button" class="btn btn-sm rounded-pill px-3 tag-btn btn-outline-secondary active" data-id="all">
+                <div class="d-flex align-items-center gap-2 overflow-auto pb-3 mb-4 flex-nowrap"
+                    style="white-space: nowrap;">
+                    <span class="text-second-colour small me-1 fw-semibold"><i class="bi bi-tags me-1"></i>Tags:</span>
+                    <button type="button" class="btn btn-sm rounded-pill px-3 tag-btn btn-outline active" data-id="all">
                         All Tags
                     </button>
                     @foreach ($tags as $tag)
-                        <button type="button" class="btn btn-sm rounded-pill px-3 tag-btn btn-outline-primary" data-id="{{ $tag->id }}">
-                            #{{ $tag->name }} <span class="badge bg-secondary-subtle text-dark ms-1">{{ $tag->posts_count ?? 0 }}</span>
+                        <button type="button" class="btn btn-sm rounded-pill px-3 tag-btn btn-outline"
+                            data-id="{{ $tag->id }}">
+                            #{{ $tag->name }} <span
+                                class="badge bg-secondary-subtle text-dark ms-1">{{ $tag->posts_count ?? 0 }}</span>
                         </button>
                     @endforeach
                 </div>
@@ -73,7 +76,7 @@
                         b.classList.add('btn-outline');
                     });
                     this.classList.remove('btn-outline');
-                    this.classList.add('btn-dark', 'active');
+                    this.classList.add('btn-primary', 'active');
 
                     const categoryId = this.getAttribute('data-id');
 
@@ -105,11 +108,12 @@
             tagButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
                     tagButtons.forEach(b => {
-                        b.classList.remove('active', 'btn-primary', 'text-white');
-                        b.classList.add('btn-outline-primary');
+                        b.classList.remove('btn-solid', 'active');
+                        b.classList.add('btn-outline');
+
                     });
-                    this.classList.remove('btn-outline-primary');
-                    this.classList.add('btn-primary', 'active', 'text-white');
+                    this.classList.remove('btn-outline');
+                    this.classList.add('btn-primary', 'active');
 
                     const tagId = this.getAttribute('data-id');
 

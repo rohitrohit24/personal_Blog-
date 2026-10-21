@@ -18,7 +18,7 @@
             <div class="col-12 col-sm-6 col-lg-3">
                 <div class="card-stat">
                     <div>
-                        <p class="fw-bold mb-1 fs-6">Total Category</p>
+                        <p class="fw-bold mb-1 fs-6">Categories</p>
                         <h3 class="mb-0 fw-bold">{{ $categories }}</h3>
                     </div>
                     <div class="icon-box text-success">
@@ -29,8 +29,7 @@
             <div class="col-12 col-sm-6 col-lg-3">
                 <div class="card-stat">
                     <div>
-                        <p class="fw-bold mb-1 fs-6">Total Draf Posts
-                        </p>
+                        <p class="fw-bold mb-1 fs-6">Draft Posts</p>
                         <h3 class="mb-0 fw-bold">{{ $draftPosts }}</h3>
                     </div>
                     <div class="icon-box text-warning">
@@ -41,7 +40,7 @@
             <div class="col-12 col-sm-6 col-lg-3">
                 <div class="card-stat">
                     <div>
-                        <p class="fw-bold mb-1 fs-6">Total Published Posts</p>
+                        <p class="fw-bold mb-1 fs-6">Published Posts</p>
                         <h3 class="mb-0 fw-bold">{{ $publishedPosts }}</h3>
                     </div>
                     <div class="icon-box text-danger">
@@ -51,11 +50,11 @@
             </div>
         </div>
 
-        <div class="row g-4 mb-">
+        <div class="row g-4 mb-4">
             <!-- Recent Posts -->
             <div class="col-12 col-lg-8">
                 <div class="card card-custom border-0 shadow-sm rounded-3">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-sm-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="fw-bold mb-0">Recent Posts</h5>
                             <a href="{{ route('posts.index') }}" class="btn btn-sm btn-primary px-3 rounded-pill">View

@@ -33,7 +33,8 @@ body {
 }
 
 .fs-8 {
-    font-size: 90px;
+    font-size: clamp(2.2rem, 6.5vw, 5.625rem);
+    line-height: 1.05;
 }
 
 .font-family {
@@ -104,7 +105,8 @@ body {
 /* hero */
 .hero-images {
     background-color: var(--main-colour);
-    overflow: hiddenleft;
+    overflow: hidden;
+    position: relative;
 }
 
 .hero-image-wrapper {
@@ -236,6 +238,7 @@ body {
 .btn-outline:hover {
     background-color: var(--second-colour);
     color: var(--main-colour) !important;
+    border-color: var(--second-colour);
     transform: translateY(-2px);
 }
 
@@ -271,6 +274,58 @@ body {
 .archive-card:hover {
     color: var(--dark-main-colour);
 }
+/* ==================== RESPONSIVE IMAGE STYLES ==================== */
+.latest-posts-card-img {
+    height: 460px;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    display: block;
+}
+
+.about-featured-img {
+    height: 620px;
+    min-height: 620px;
+    max-height: 620px;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    display: block;
+}
+
+.author-profile-img {
+    height: 280px;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    display: block;
+}
+
+.contact-profile-img {
+    height: 500px;
+    max-height: 500px;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    display: block;
+}
+
+.archive-card-img {
+    height: 280px;
+    min-height: 280px;
+    max-height: 280px;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    display: block;
+}
+
+.post-card-img-wrapper {
+    height: 330px;
+    min-height: 330px;
+    overflow: hidden;
+}
+
 .fs-small {
     font-size: 13px;
     font-weight: 500;
@@ -282,32 +337,182 @@ body {
     border: 1px solid rgba(128, 128, 128, 0.321);
 }
 
-@media (max-width: 992px) {
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES (All Screen Breakpoints)
+   ========================================================================== */
+
+/* 1. Laptop & Small Desktop (992px to 1199.98px) */
+@media (max-width: 1199.98px) {
     .hero-heading {
-        font-size: clamp(3.2rem, 12vw, 8rem);
-        margin: 20px 0 30px 0; /* Tablet par halka top margin */
+        font-size: clamp(3.5rem, 11vw, 7.5rem);
+        margin: 10px 0 30px 0;
+    }
+
+    .hero-left-image {
+        left: -70px;
+        width: 150px;
+        height: 190px;
+        top: 20px;
+    }
+
+    .hero-right-image {
+        right: -70px;
+        width: 150px;
+        height: 190px;
+        bottom: 50px;
+    }
+
+    .fs-8 {
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+    }
+
+    /* Images */
+    .latest-posts-card-img {
+        height: 380px;
+    }
+
+    .about-featured-img {
+        height: 520px;
+        min-height: 520px;
+        max-height: 520px;
+    }
+
+    .author-profile-img {
+        height: 260px;
+    }
+
+    .contact-profile-img {
+        height: 420px;
+        max-height: 420px;
+    }
+
+    .archive-card-img {
+        height: 250px;
+        min-height: 250px;
+        max-height: 250px;
+    }
+
+    .post-card-img-wrapper {
+        height: 280px;
+        min-height: 280px;
     }
 }
 
-@media (max-width: 768px) {
+/* 2. Tablet Portrait (768px to 991.98px) */
+@media (max-width: 991.98px) {
     .navbar {
-        font-size: 10px;
+        font-size: 16px;
+        padding: 0.75rem 1rem;
+    }
+
+    .navbar-nav {
+        padding-top: 1rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .custom-nav-link {
+        text-align: center;
+        display: block;
+        margin-bottom: 0.4rem;
+        font-size: 15px;
+    }
+
+    .hero-heading {
+        font-size: clamp(3rem, 11vw, 6rem);
+        margin: 20px 0 25px 0;
+    }
+
+    .hero-image-wrapper {
+        max-width: 440px;
+    }
+
+    .hero-image {
+        max-height: 480px;
+    }
+
+    .hero-left-image {
+        left: -40px;
+        width: 130px;
+        height: 165px;
+        top: 10px;
+    }
+
+    .hero-right-image {
+        right: -40px;
+        width: 130px;
+        height: 165px;
+        bottom: 30px;
+    }
+
+    .fs-8 {
+        font-size: clamp(2.2rem, 5.5vw, 3.8rem);
     }
 
     .custom-btn {
-        padding: 3px 10px !important;
+        font-size: 17px;
+        padding: 7px 16px !important;
+    }
+
+    .footer {
+        font-size: 16px;
+    }
+
+    /* Images */
+    .latest-posts-card-img {
+        height: 320px;
+    }
+
+    .about-featured-img {
+        height: 420px;
+        min-height: 420px;
+        max-height: 420px;
+    }
+
+    .author-profile-img {
+        height: 240px;
+    }
+
+    .contact-profile-img {
+        height: 360px;
+        max-height: 360px;
+    }
+
+    .archive-card-img {
+        height: 220px;
+        min-height: 220px;
+        max-height: 220px;
+    }
+
+    .post-card-img-wrapper {
+        height: 250px;
+        min-height: 250px;
+    }
+}
+
+/* 3. Mobile Landscape & Tablets (576px to 767.98px) */
+@media (max-width: 767.98px) {
+    .navbar {
+        font-size: 15px;
+    }
+
+    .custom-btn {
+        padding: 6px 14px !important;
         font-size: 15px;
     }
 
     .hero-image-wrapper {
         max-width: 85%;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+    }
+
+    .hero-image {
+        max-height: 380px;
     }
 
     .hero-left-image {
         top: auto;
-        left: -10px;
-        bottom: 50px;
+        left: 0;
+        bottom: 25px;
         width: 110px;
         height: 140px;
         z-index: 5;
@@ -316,9 +521,9 @@ body {
 
     .hero-right-image {
         top: auto;
-        right: auto;
-        left: 10px;
-        bottom: -15px;
+        right: 0;
+        left: auto;
+        bottom: -10px;
         width: 110px;
         height: 140px;
         z-index: 6;
@@ -326,8 +531,8 @@ body {
     }
 
     .hero-heading {
-        font-size: clamp(2.8rem, 12vw, 5.5rem);
-        margin: 30px 0 25px 0; /* Chhoti screen par top margin 30px */
+        font-size: clamp(2.5rem, 12vw, 4.2rem);
+        margin: 25px 0 20px 0;
     }
 
     .hero-heading .bg-box {
@@ -335,31 +540,199 @@ body {
     }
 
     .fs-8 {
-        font-size: 40px;
+        font-size: clamp(1.8rem, 5vw, 2.8rem);
+    }
+
+    .footer {
+        font-size: 15px;
+    }
+
+    .latest-posts-image {
+        margin-bottom: 1rem;
+    }
+
+    /* Images */
+    .latest-posts-card-img {
+        height: 270px;
+    }
+
+    .about-featured-img {
+        height: 320px;
+        min-height: 320px;
+        max-height: 320px;
+    }
+
+    .author-profile-img {
+        height: 220px;
+    }
+
+    .contact-profile-img {
+        height: 300px;
+        max-height: 300px;
+    }
+
+    .archive-card-img {
+        height: 200px;
+        min-height: 200px;
+        max-height: 200px;
+    }
+
+    .post-card-img-wrapper {
+        height: 220px;
+        min-height: 220px;
     }
 }
 
+/* 4. Mobile Portrait (381px to 575.98px) */
+@media (max-width: 575.98px) {
+    .navbar-brand {
+        font-size: 1.15rem;
+    }
+
+    .hero-heading {
+        font-size: clamp(2.1rem, 12vw, 3.2rem);
+        margin: 20px 0 15px 0;
+        line-height: 0.95;
+    }
+
+    .hero-image {
+        max-height: 320px;
+    }
+
+    .hero-left-image {
+        width: 90px;
+        height: 115px;
+        left: -5px;
+        bottom: 15px;
+    }
+
+    .hero-right-image {
+        width: 90px;
+        height: 115px;
+        right: -5px;
+        bottom: -10px;
+    }
+
+    .fs-8 {
+        font-size: 1.9rem;
+    }
+
+    .custom-btn {
+        padding: 6px 12px !important;
+        font-size: 14px;
+    }
+
+    .footer {
+        font-size: 14px;
+    }
+
+    /* Images */
+    .latest-posts-card-img {
+        height: 220px;
+    }
+
+    .about-featured-img {
+        height: 240px;
+        min-height: 240px;
+        max-height: 240px;
+    }
+
+    .author-profile-img {
+        height: 190px;
+    }
+
+    .contact-profile-img {
+        height: 240px;
+        max-height: 240px;
+    }
+
+    .archive-card-img {
+        height: 180px;
+        min-height: 180px;
+        max-height: 180px;
+    }
+
+    .post-card-img-wrapper {
+        height: 190px;
+        min-height: 190px;
+    }
+}
+
+/* 5. Extra Small Mobile (<= 380px) */
 @media (max-width: 380px) {
     .hero-heading {
-        font-size: 2.6rem;
-        line-height: 0.9;
-        margin-top: 25px; /* Sabse chhoti screen par top margin */
+        font-size: 2.1rem;
+        line-height: 0.95;
+        margin-top: 15px;
     }
 
     .hero-heading .bg-box {
         padding: 0 4px;
-        height: 0.8em;
+        height: 0.85em;
+    }
+
+    .hero-image {
+        max-height: 260px;
     }
 
     .hero-left-image,
     .hero-right-image {
-        width: 90px;
-        height: 120px;
+        width: 75px;
+        height: 100px;
     }
+
+    .hero-left-image {
+        left: -8px;
+        bottom: 10px;
+    }
+
+    .hero-right-image {
+        right: -8px;
+        bottom: -15px;
+    }
+
     .fs-8 {
-        font-size: 20px;
+        font-size: 1.6rem;
     }
+
     .custom-btn {
-        padding: 1px 10px !important;
+        padding: 5px 10px !important;
+        font-size: 13px;
+    }
+
+    .custom-nav-link {
+        font-size: 13px;
+        padding: 6px 12px !important;
+    }
+
+    /* Images */
+    .latest-posts-card-img {
+        height: 190px;
+    }
+
+    .about-featured-img {
+        height: 200px;
+        min-height: 200px;
+        max-height: 200px;
+    }
+
+    .author-profile-img {
+        height: 170px;
+    }
+
+    .contact-profile-img {
+        height: 210px;
+        max-height: 210px;
+    }
+
+    .archive-card-img {
+        height: 160px;
+        min-height: 160px;
+        max-height: 160px;
+    }
+
+    .post-card-img-wrapper {
+        height: 170px;
+        min-height: 170px;
     }
 }

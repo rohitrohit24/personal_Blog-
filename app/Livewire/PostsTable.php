@@ -33,7 +33,7 @@ class PostsTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return Post::query()->with('tags');
+        return Post::query()->with(['tags', 'category']);
     }
 
     public function refreshTable() {}
@@ -91,7 +91,8 @@ class PostsTable extends DataTableComponent
                         'id' => $row->id,
                         'title' => $row->title,
                         'slug' => $row->slug,
-                        'category' => $row->category_id,
+                        'category_id' => $row->category_id,
+                        'category_name' => $row->category?->name,
                         'status' => $row->status,
                         'content' => $row->content,
                         'image' => $row->image,
